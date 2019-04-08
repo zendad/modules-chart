@@ -1,15 +1,14 @@
 {{- if .Values.ingress.enabled -}}
-{{- $serviceName := include "modules.fullname" . -}}
+{{- $serviceName :=  .Values.name -}}
 {{- $servicePort := .Values.service.externalPort -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "modules.fullname" . }}
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ template "modules.name" . }}
+    app: {{ .Values.name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
   annotations:
     {{- range $key, $value := .Values.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}

@@ -1,11 +1,12 @@
 # Default values for modules.
 # This is a YAML-formatted file.
 # Declare variables for templates.
+name:
 replicaCount: 3
-moduleNumber:
+moduleNumber: 
 image:
-  repository:
-  tag:
+  repository: 
+  tag: 
   pullPolicy: IfNotPresent
 service:
   enabled: false
@@ -26,3 +27,17 @@ resources:
     requests:
      cpu: 100m
      memory: 128Mi
+autoscaling:
+  enabled: true
+  king: Deployment
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50
+podbugdet:
+  enabled: true
+  king: Deployment
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50

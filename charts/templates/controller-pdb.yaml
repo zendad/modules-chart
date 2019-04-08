@@ -1,0 +1,14 @@
+{{- if eq .Values.autoscaling.kind "PodDisruptionBudget" }}
+{{- if .Values.podbugdet.enabled }}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.name }}
+spec:
+  minAvailable: {{ .Values.podbugdet.minReplicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+{{- end }}
+{{- end }}

@@ -1,27 +1,25 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
-  namespace: {{ .Values.namespace }}
+  generation: 1
   labels:
     app: {{ .Values.name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   progressDeadlineSeconds: 600
   replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 50%
       maxSurge: 50%
-  revisionHistoryLimit: 2
-  selector:
-    matchLabels:
-      app: {{ .Values.name }}
-      release: {{ .Release.Name }}
-  strategy:
-    type: Recreate
   template:
     metadata:
       creationTimestamp: null
@@ -31,13 +29,13 @@ spec:
       containers:
       - env:
         - name: MODULE_NUMBER
-          value: {{ .Values.moduleNumber }}
+          value: "{{ .Values.moduleNumber }}"
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy:  {{ .Values.image.pullPolicy }}
-        name: {{ .Chart.Name }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: {{ .Values.name }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-          name: {{ .Chart.Name }}
+          name: {{ .Values.name }}
           protocol: TCP
         resources:
           limits:
@@ -50,8 +48,8 @@ spec:
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       nodeSelector: {}
-      tolerations: {}
-      imagePullSecrets: 
+      tolerations: []
+      imagePullSecrets:
         - name: {{ .Values.imagePullSecrets }}
       restartPolicy: Always
       schedulerName: default-scheduler

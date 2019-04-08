@@ -1,19 +1,25 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "modules.fullname" . }}
+  name: {{ template "modulesapp.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ template "modules.fullname" . }}
+    app: {{ template "modulesapp.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   progressDeadlineSeconds: 600
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: {{ template "modules.name" . }}
+      app: {{ template "modulesapp.name" . }}
       release: {{ .Release.Name }}
   strategy:
     type: Recreate
@@ -21,7 +27,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: {{ template "modules.name" . }}
+        app: {{ template "modulesapp.name" . }}
     spec:
       containers:
       - env:
@@ -49,3 +55,14 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
 status: {}
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ template "modulesapp.fullname" . }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: {{ template "modulesapp.name" . }}

@@ -32,7 +32,7 @@ spec:
       - env:
         - name: MODULE_NUMBER
           value: {{ .Values.moduleNumber }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy:  {{ .Values.image.pullPolicy }}
         name: {{ .Chart.Name }}
         ports:

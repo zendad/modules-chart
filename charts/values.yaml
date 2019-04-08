@@ -19,7 +19,7 @@ nodeSelector: {}
 tolerations: []
 imagePullSecrets: gcr-secret
 securityContext: {}
-resources: {}
+resources:
     limits:
      cpu: 400m
      memory: 512Mi
